@@ -38,7 +38,7 @@ Es werden nun Services für eine komplette SVWS-Umgebung gestartet: Datenbank, S
 Nach dem Start kann der SVWS-Server über den Port 8443 erreicht werden. 
 Auf die Datenbank kann standardmäßig nicht außerhalb der Docker-Umgebung zugegriffen werden (not bound). 
 Intern nutzt die Datenbank den Port 3306. Für den Zugriff von SchILD 3 ist ein Port-Binding auch außerhalb von Docker nötig, 
-dies wird über die Angabe eines Port-Mappings (ports) Eintrag in der Datei erreicht. 
+dies wird über die Angabe eines Port-Mappings (ports) Eintrag in der Datei erreicht. (Ist in der mitgelieferten Datei bereits enthalten.)
 In diesem Beispiel wird der Port 3306 im Container auf den Port 3306 auf dem Host abgebildet.:
 
 Beispiel:
@@ -63,8 +63,6 @@ MARIADB_DATABASE=your-svws-db-schema-name
 MARIADB_HOST=mariadb
 MARIADB_USER=your-mariadb-user
 MARIADB_PASSWORD=your-mariadb-pw
-MARIADB_DATA_DIR=/var/lib/mysql/data
-MARIADB_LOG_DIR=/var/lib/mysql/log
 SVWS_TLS_KEYSTORE_PATH=/etc/app/svws/conf/keystore
 SVWS_TLS_KEYSTORE_PASSWORD=your-keystore-pw
 SVWS_TLS_KEY_ALIAS=your-keystore-key-alias
@@ -72,15 +70,13 @@ SVWS_TLS_KEY_ALIAS=your-keystore-key-alias
 
 | Variable | Beschreibung |
 | ----------- | ----------- |
-| INIT_SCRIPTS_DIR | [Optional] Pfad zu einem Verzeichnis im SVWS-Container für Initialisierungsskripts. Alle Shell-Skripts in diesem Verzeichnis werden beim Hochfahren des SVWS-Containers ausgeführt. So können z.B. [automatische Testdatenimporte](#automatische-initialisierung-beim-start-testdatenimporte) in den Boot-Prozess integriert werden. |
+| INIT_SCRIPTS_DIR | [Optional] Pfad zu einem Verzeichnis im SVWS-Container für Initialisierungsskripts. Alle Shell-Skripts in diesem Verzeichnis werden beim jedem Hochfahren des SVWS-Containers ausgeführt. So können z.B. [automatische Testdatenimporte](#automatische-initialisierung-beim-start-testdatenimporte) in den Boot-Prozess integriert werden. |
 | MARIADB_ROOT_PASSWORD | Passwort, das für den Root-User der MariaDB-Instanz verwendet werden soll |
-| MARIADB_DATABASE | Name des Datenbankschemas, mit dem sich der SVWS-Server verbindet (z.B. "gymabi") |
+| MARIADB_DATABASE | Name des Datenbankschemas, mit dem sich der SVWS-Server verbindet (z.B. "svws-prod-meine-schule"). Wird automatisch beim Start des Servers angelegt |
 | MARIADB_HOST | Name des Hosts, auf dem die SVWS-Datenbank läuft. Im Falle der Docker-Umgebung entspricht dieser Wert dem Service-Namen von docker-compose (also "mariadb"). |
-| MARIADB_USER | Datenbank-Benutzer, unter dem sich der SVWS-Server mit der Datenbank verbindet. |
+| MARIADB_USER | Datenbank-Benutzer, unter dem sich der SVWS-Server mit der Datenbank verbindet. Wird automatisch beim Start des Servers angelegt und erhält _GRANT ALL_ auf MARIADB_DATABASE |
 | MARIADB_PASSWORD | Passwort des Datenbank-Benutzers, unter dem sich der SVWS-Server mit der Datenbank verbindet. |
-| MARIADB_DATA_DIR | Pfad zum Daten-Verzeichnis innerhalb der MariaDB-Instanz. Wird benötigt, um die Daten im Datenbank-Container auf einem Volume zu sichern (volume mount). Pfad hängt von dem verwendeten MariaDB Basis-Image ab. |
-| MARIADB_LOG_DIR | Pfad zum Log-Verzeichnis innerhalb der MariaDB-Instanz. Wird benötigt, um die Logs im Datenbank-Container auf einem Volume zu sichern (volume mount). Pfad hängt von dem verwendeten MariaDB Basis-Image ab. |
-| SVWS_TLS_KEYSTORE_PATH | Unter diesem Pfad erwartet der SVWS den Java-Keystore für die Terminierung von SSL am Server |
+| SVWS_TLS_KEYSTORE_PATH | Unter diesem Pfad erwartet der SVWS den Java-Keystore für die Terminierung von SSL am Server (sollte nicht geändert werden)|
 | SVWS_TLS_KEYSTORE_PASSWORD | Passwort des Keystores |
 | SVWS_TLS_KEY_ALIAS | Alias des zu verwendenden Keys im Keystore  |
 
